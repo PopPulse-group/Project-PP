@@ -1,0 +1,25 @@
+# 本地配置（含真实密钥/DSN），提交 example 模板即可
+etc/poppulse.yaml
+
+# 编译产物
+*.exe
+*.exe~
+poppulse
+poppulse-api
+
+# 测试与覆盖率
+*.out
+*.test
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# 系统文件
+Thumbs.db
+.DS_Store
+
+# 本地数据
+*.log
+/data/

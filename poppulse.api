@@ -1,0 +1,722 @@
+syntax = "v1"
+
+info (
+	title:   "PopPulse MVP API"
+	desc:    "潮玩脉动 PopPulse 后端 MVP 接口契约 v1"
+	author:  "PopPulse-group"
+	version: "v1.0"
+)
+
+// ============ 通用类型 ============
+type (
+	PageReq {
+		Page     int `form:"page,default=1"`
+		PageSize int `form:"page_size,default=20"`
+	}
+	PageResp {
+		Total int64 `json:"total"`
+	}
+)
+
+// ============ 健康检查 ============
+type HealthResp {
+	Status string `json:"status"`
+	Time   string `json:"time"`
+}
+
+// ============ 账号 ============
+type (
+	LoginReq {
+		Username string `json:"username"`
+		Password string `json:"password"`
+	}
+	UserInfo {
+		Id        string `json:"id"`
+		Username  string `json:"username"`
+		Nickname  string `json:"nickname"`
+		Role      string `json:"role"` // user | operator
+		CreatedAt string `json:"created_at"`
+	}
+	LoginResp {
+		AccessToken string   `json:"access_token"`
+		ExpiresAt   int64    `json:"expires_at"` // Unix 秒
+		User        UserInfo `json:"user"`
+	}
+	UpdateUserMeReq {
+		Nickname *string `json:"nickname,optional"`
+		Avatar   *string `json:"avatar,optional"`
+		Bio      *string `json:"bio,optional"`
+	}
+)
+
+// ============ 商品 ============
+type (
+	IpItem {
+		Id          string `json:"id"`
+		Name        string `json:"name"`
+		Description string `json:"description"`
+		CreatedAt   string `json:"created_at"`
+	}
+	IpListResp {
+		List  []IpItem `json:"list"`
+		Total int64    `json:"total"`
+	}
+	SeriesItem {
+		Id          string `json:"id"`
+		IpId        string `json:"ip_id"`
+		Name        string `json:"name"`
+		Description string `json:"description"`
+		CreatedAt   string `json:"created_at"`
+	}
+	SeriesListResp {
+		List  []SeriesItem `json:"list"`
+		Total int64        `json:"total"`
+	}
+	IpListReq {
+		PageReq
+	}
+	SeriesListReq {
+		IpId string `form:"ip_id,optional"`
+		PageReq
+	}
+	ProductItem {
+		Id            string `json:"id"`
+		IpId          string `json:"ip_id"`
+		SeriesId      string `json:"series_id"`
+		Title         string `json:"title"`
+		CoverImage    string `json:"cover_image"`
+		PriceMin      int64  `json:"price_min"` // 整数分
+		PriceMax      int64  `json:"price_max"`
+		Status        string `json:"status"` // on_sale | off_sale
+		SaleStartTime string `json:"sale_start_time,optional"`
+		CreatedAt     string `json:"created_at"`
+	}
+	ProductListReq {
+		IpId     string `form:"ip_id,optional"`
+		SeriesId string `form:"series_id,optional"`
+		Keyword  string `form:"keyword,optional"`
+		MinPrice int64  `form:"min_price,optional"`
+		MaxPrice int64  `form:"max_price,optional"`
+		PageReq
+	}
+	ProductListResp {
+		List  []ProductItem `json:"list"`
+		Total int64         `json:"total"`
+	}
+	ProductDetailReq {
+		ProductId string `path:"product_id"`
+	}
+	SkuItem {
+		Id    string `json:"id"`
+		Name  string `json:"name"`
+		Price int64  `json:"price"`
+		Stock int64  `json:"stock"`
+	}
+	ProductDetail {
+		Id            string    `json:"id"`
+		IpId          string    `json:"ip_id"`
+		SeriesId      string    `json:"series_id"`
+		Title         string    `json:"title"`
+		Description   string    `json:"description"`
+		Status        string    `json:"status"`
+		SaleStartTime string    `json:"sale_start_time,optional"`
+		Skus          []SkuItem `json:"skus"`
+		CreatedAt     string    `json:"created_at"`
+	}
+	ProductDetailResp {
+		Product ProductDetail `json:"product"`
+	}
+)
+
+// ============ 商品管理（operator） ============
+type (
+	CreateIpReq {
+		Name        string  `json:"name"`
+		Description *string `json:"description,optional"`
+	}
+	CreateEntityResp {
+		Id string `json:"id"`
+	}
+	CreateSeriesReq {
+		IpId        string  `json:"ip_id"`
+		Name        string  `json:"name"`
+		Description *string `json:"description,optional"`
+	}
+	CreateProductReq {
+		IpId          string  `json:"ip_id"`
+		SeriesId      *string `json:"series_id,optional"`
+		Title         string  `json:"title"`
+		Description   *string `json:"description,optional"`
+		CoverImage    *string `json:"cover_image,optional"`
+		SaleStartTime *string `json:"sale_start_time,optional"` // RFC3339
+	}
+	AdminProductItem {
+		Id            string `json:"id"`
+		IpId          string `json:"ip_id"`
+		SeriesId      string `json:"series_id"`
+		Title         string `json:"title"`
+		Description   string `json:"description"`
+		CoverImage    string `json:"cover_image"`
+		Status        string `json:"status"` // on_sale | off_sale
+		SaleStartTime string `json:"sale_start_time,optional"`
+		CreatedAt     string `json:"created_at"`
+		UpdatedAt     string `json:"updated_at"`
+	}
+	AdminProductListReq {
+		Keyword string `form:"keyword,optional"`
+		Status  string `form:"status,optional"`
+		PageReq
+	}
+	AdminProductListResp {
+		List  []AdminProductItem `json:"list"`
+		Total int64              `json:"total"`
+	}
+	AdminProductDetailReq {
+		ProductId string `path:"product_id"`
+	}
+	AdminSkuItem {
+		Id        string `json:"id"`
+		Name      string `json:"name"`
+		Price     int64  `json:"price"`
+		Status    string `json:"status"`
+		Stock     int64  `json:"stock"`
+		Available int64  `json:"available"`
+		Reserved  int64  `json:"reserved"`
+		Sold      int64  `json:"sold"`
+	}
+	AdminProductDetail {
+		AdminProductItem
+		Skus []AdminSkuItem `json:"skus"`
+	}
+	AdminProductDetailResp {
+		Product AdminProductDetail `json:"product"`
+	}
+	UpdateProductReq {
+		ProductId     string  `path:"product_id"`
+		SeriesId      *string `json:"series_id,optional"`
+		Title         *string `json:"title,optional"`
+		Description   *string `json:"description,optional"`
+		CoverImage    *string `json:"cover_image,optional"`
+		SaleStartTime *string `json:"sale_start_time,optional"`
+	}
+	UpdateProductStatusReq {
+		ProductId string `path:"product_id"`
+		Status    string `json:"status"` // on_sale | off_sale
+	}
+	CreateSkuReq {
+		ProductId string `path:"product_id"`
+		Name      string `json:"name"`
+		Price     int64  `json:"price"`
+	}
+	UpdateSkuReq {
+		SkuId string  `path:"sku_id"`
+		Name  *string `json:"name,optional"`
+		Price *int64  `json:"price,optional"`
+	}
+)
+
+// ============ 库存（operator） ============
+type (
+	GetStockReq {
+		SkuId string `path:"sku_id"`
+	}
+	StockResp {
+		SkuId     string `json:"sku_id"`
+		Total     int64  `json:"total"`
+		Available int64  `json:"available"`
+		Reserved  int64  `json:"reserved"`
+		Sold      int64  `json:"sold"`
+	}
+	AdjustStockReq {
+		SkuId  string `json:"sku_id"`
+		Delta  int64  `json:"delta"` // 正数入库、负数扣减
+		Reason string `json:"reason"`
+	}
+	AdjustStockResp {
+		SkuId     string `json:"sku_id"`
+		Available int64  `json:"available"`
+	}
+	StockLogItem {
+		Id         string `json:"id"`
+		SkuId      string `json:"sku_id"`
+		Type       string `json:"type"` // adjust | reserve | release | confirm
+		Delta      int64  `json:"delta"`
+		Reason     string `json:"reason,optional"`
+		RefNo      string `json:"ref_no,optional"`
+		OperatorId string `json:"operator_id,optional"`
+		CreatedAt  string `json:"created_at"`
+	}
+	StockLogListReq {
+		SkuId string `form:"sku_id,optional"`
+		PageReq
+	}
+	StockLogListResp {
+		List  []StockLogItem `json:"list"`
+		Total int64          `json:"total"`
+	}
+)
+
+// ============ 订单 ============
+type (
+	CreateOrderReq {
+		IdempotencyKey string `header:"Idempotency-Key"` // 16-64 字符，建议 UUID
+		SkuId          string `json:"sku_id"`
+		Quantity       int64  `json:"quantity"` // 1-99
+	}
+	CreateOrderResp {
+		OrderId  string `json:"order_id"`
+		Amount   int64  `json:"amount"`
+		Status   string `json:"status"`
+		ExpireAt string `json:"expire_at"` // 支付期限 RFC3339
+	}
+	OrderItem {
+		Id          string `json:"id"`
+		Status      string `json:"status"` // pending_payment | cancelled | pending_completion | completed
+		Amount      int64  `json:"amount"`
+		CreatedAt   string `json:"created_at"`
+		PaidAt      string `json:"paid_at,optional"`
+		CompletedAt string `json:"completed_at,optional"`
+	}
+	OrderListReq {
+		Status string `form:"status,optional"`
+		PageReq
+	}
+	OrderListResp {
+		List  []OrderItem `json:"list"`
+		Total int64       `json:"total"`
+	}
+	OrderItemDetail {
+		Id       string `json:"id"`
+		SkuId    string `json:"sku_id"`
+		SkuName  string `json:"sku_name"`
+		Price    int64  `json:"price"`
+		Quantity int64  `json:"quantity"`
+		Amount   int64  `json:"amount"`
+	}
+	StatusLogItem {
+		Id         string `json:"id"`
+		FromStatus string `json:"from_status"`
+		ToStatus   string `json:"to_status"`
+		OperatorId string `json:"operator_id,optional"`
+		Note       string `json:"note,optional"`
+		CreatedAt  string `json:"created_at"`
+	}
+	OrderDetail {
+		Id          string            `json:"id"`
+		UserId      string            `json:"user_id"`
+		Status      string            `json:"status"`
+		Amount      int64             `json:"amount"`
+		Items       []OrderItemDetail `json:"items"`
+		StatusLogs  []StatusLogItem   `json:"status_logs"`
+		CreatedAt   string            `json:"created_at"`
+		PaidAt      string            `json:"paid_at,optional"`
+		ExpireAt    string            `json:"expire_at,optional"`
+		CompletedAt string            `json:"completed_at,optional"`
+		CancelledAt string            `json:"cancelled_at,optional"`
+	}
+	OrderDetailReq {
+		OrderId string `path:"order_id"`
+	}
+	OrderDetailResp {
+		Order OrderDetail `json:"order"`
+	}
+	CancelOrderReq {
+		OrderId string `path:"order_id"`
+	}
+	CancelOrderResp {
+		OrderId string `json:"order_id"`
+		Status  string `json:"status"`
+	}
+)
+
+// ============ 支付 ============
+type (
+	MockPayConfirmReq {
+		OrderId string `json:"order_id"`
+	}
+	MockPayConfirmResp {
+		PaymentNo string `json:"payment_no"`
+		OrderId   string `json:"order_id"`
+		Amount    int64  `json:"amount"`
+		Status    string `json:"status"` // success
+		PaidAt    string `json:"paid_at"`
+	}
+	PaymentResp {
+		PaymentNo string `json:"payment_no"`
+		OrderId   string `json:"order_id"`
+		Amount    int64  `json:"amount"`
+		Status    string `json:"status"` // pending | success | closed
+		PaidAt    string `json:"paid_at,optional"`
+		CreatedAt string `json:"created_at"`
+	}
+	GetPaymentReq {
+		PaymentNo string `path:"payment_no"`
+	}
+)
+
+// ============ 订单管理（operator） ============
+type (
+	AdminOrderItem {
+		OrderItem
+		UserId   string `json:"user_id"`
+		Username string `json:"username,optional"`
+	}
+	AdminOrderListReq {
+		UserId string `form:"user_id,optional"`
+		Status string `form:"status,optional"`
+		PageReq
+	}
+	AdminOrderListResp {
+		List  []AdminOrderItem `json:"list"`
+		Total int64            `json:"total"`
+	}
+	AdminOrderDetailResp {
+		Order OrderDetail `json:"order"`
+	}
+	AdminCompleteOrderReq {
+		OrderId string  `path:"order_id"`
+		Note    *string `json:"note,optional"`
+	}
+	AdminCompleteOrderResp {
+		OrderId string `json:"order_id"`
+		Status  string `json:"status"`
+	}
+)
+
+// ============ 售后 ============
+type (
+	CreateAfterSaleReq {
+		OrderId     string  `json:"order_id"`
+		Reason      string  `json:"reason"`
+		Description *string `json:"description,optional"`
+	}
+	CreateAfterSaleResp {
+		AfterSaleId string `json:"after_sale_id"`
+		RefundNo    string `json:"refund_no"`
+		Amount      int64  `json:"amount"`
+		Status      string `json:"status"` // pending_review
+	}
+	AfterSaleItem {
+		Id        string `json:"id"`
+		OrderId   string `json:"order_id"`
+		RefundNo  string `json:"refund_no"`
+		Amount    int64  `json:"amount"`
+		Status    string `json:"status"` // pending_review | rejected | processing | completed
+		CreatedAt string `json:"created_at"`
+	}
+	AfterSaleListReq {
+		Status string `form:"status,optional"`
+		PageReq
+	}
+	AfterSaleListResp {
+		List  []AfterSaleItem `json:"list"`
+		Total int64           `json:"total"`
+	}
+	AfterSaleDetail {
+		AfterSaleItem
+		UserId       string `json:"user_id"`
+		Reason       string `json:"reason"`
+		Description  string `json:"description"`
+		ReviewedAt   string `json:"reviewed_at,optional"`
+		RejectReason string `json:"reject_reason,optional"`
+		CompletedAt  string `json:"completed_at,optional"`
+	}
+	AfterSaleDetailReq {
+		AfterSaleId string `path:"after_sale_id"`
+	}
+	AfterSaleDetailResp {
+		AfterSale AfterSaleDetail `json:"after_sale"`
+	}
+	RefundResp {
+		RefundNo    string `json:"refund_no"`
+		AfterSaleId string `json:"after_sale_id"`
+		OrderId     string `json:"order_id"`
+		Amount      int64  `json:"amount"`
+		Status      string `json:"status"` // pending | processing | success | failed
+		RefundedAt  string `json:"refunded_at,optional"`
+		CreatedAt   string `json:"created_at"`
+	}
+	GetRefundReq {
+		RefundNo string `path:"refund_no"`
+	}
+)
+
+// ============ 售后管理（operator） ============
+type (
+	AdminAfterSaleListReq {
+		Status string `form:"status,optional"`
+		PageReq
+	}
+	AdminAfterSaleListResp {
+		List  []AfterSaleItem `json:"list"`
+		Total int64           `json:"total"`
+	}
+	AdminAfterSaleDetailReq {
+		AfterSaleId string `path:"after_sale_id"`
+	}
+	AdminReviewAfterSaleReq {
+		AfterSaleId string  `path:"after_sale_id"`
+		Action      string  `json:"action"` // approve | reject
+		Reason      *string `json:"reason,optional"`
+	}
+	AdminReviewAfterSaleResp {
+		AfterSaleId string `json:"after_sale_id"`
+		Status      string `json:"status"`
+	}
+	AdminMockRefundConfirmReq {
+		RefundNo string `json:"refund_no"`
+	}
+	AdminMockRefundConfirmResp {
+		RefundNo   string `json:"refund_no"`
+		Status     string `json:"status"`
+		RefundedAt string `json:"refunded_at"`
+	}
+	AdminGetRefundReq {
+		RefundNo string `path:"refund_no"`
+	}
+)
+
+// ============ 路由：公共 ============
+@server (
+	group:  health
+	prefix: /api/v1
+)
+service poppulse {
+	@doc "M01 进程存活"
+	@handler healthLive
+	get /health/live returns (HealthResp)
+
+	@doc "M02 服务就绪"
+	@handler healthReady
+	get /health/ready returns (HealthResp)
+}
+
+@server (
+	group:  auth
+	prefix: /api/v1
+)
+service poppulse {
+	@doc "M03 账号密码登录"
+	@handler login
+	post /auth/login (LoginReq) returns (LoginResp)
+}
+
+// ============ 路由：用户（user） ============
+@server (
+	group:  user
+	prefix: /api/v1
+	jwt:    Auth
+)
+service poppulse {
+	@doc "M04 当前用户"
+	@handler getUserMe
+	get /users/me returns (UserInfo)
+
+	@doc "M05 修改个人资料"
+	@handler updateUserMe
+	patch /users/me (UpdateUserMeReq) returns (UserInfo)
+}
+
+// ============ 路由：商品（public） ============
+@server (
+	group:  product
+	prefix: /api/v1
+)
+service poppulse {
+	@doc "M06 IP 列表"
+	@handler listIps
+	get /ips (IpListReq) returns (IpListResp)
+
+	@doc "M07 系列列表"
+	@handler listSeries
+	get /series (SeriesListReq) returns (SeriesListResp)
+
+	@doc "M08 商品列表"
+	@handler listProducts
+	get /products (ProductListReq) returns (ProductListResp)
+
+	@doc "M09 商品详情"
+	@handler getProductDetail
+	get /products/:product_id (ProductDetailReq) returns (ProductDetailResp)
+}
+
+// ============ 路由：商品管理（operator） ============
+@server (
+	group:      adminProduct
+	prefix:     /api/v1
+	jwt:        Auth
+	middleware: Operator
+)
+service poppulse {
+	@doc "M10 创建 IP"
+	@handler createIp
+	post /admin/ips (CreateIpReq) returns (CreateEntityResp)
+
+	@doc "M11 创建系列"
+	@handler createSeries
+	post /admin/series (CreateSeriesReq) returns (CreateEntityResp)
+
+	@doc "M12 创建商品草稿"
+	@handler createProduct
+	post /admin/products (CreateProductReq) returns (CreateEntityResp)
+
+	@doc "M13 后台商品列表"
+	@handler adminListProducts
+	get /admin/products (AdminProductListReq) returns (AdminProductListResp)
+
+	@doc "M14 后台商品详情"
+	@handler adminGetProductDetail
+	get /admin/products/:product_id (AdminProductDetailReq) returns (AdminProductDetailResp)
+
+	@doc "M15 编辑商品"
+	@handler updateProduct
+	patch /admin/products/:product_id (UpdateProductReq) returns (CreateEntityResp)
+
+	@doc "M16 上架或下架"
+	@handler updateProductStatus
+	put /admin/products/:product_id/status (UpdateProductStatusReq) returns (CreateEntityResp)
+
+	@doc "M17 新增 SKU"
+	@handler createSku
+	post /admin/products/:product_id/skus (CreateSkuReq) returns (CreateEntityResp)
+
+	@doc "M18 修改 SKU"
+	@handler updateSku
+	patch /admin/skus/:sku_id (UpdateSkuReq) returns (CreateEntityResp)
+}
+
+// ============ 路由：库存管理（operator） ============
+@server (
+	group:      adminStock
+	prefix:     /api/v1
+	jwt:        Auth
+	middleware: Operator
+)
+service poppulse {
+	@doc "M19 库存余额"
+	@handler getStock
+	get /admin/stocks/:sku_id (GetStockReq) returns (StockResp)
+
+	@doc "M20 调整可售库存"
+	@handler adjustStock
+	post /admin/stocks/adjust (AdjustStockReq) returns (AdjustStockResp)
+
+	@doc "M21 库存流水"
+	@handler listStockLogs
+	get /admin/stock-logs (StockLogListReq) returns (StockLogListResp)
+}
+
+// ============ 路由：订单（user） ============
+@server (
+	group:  order
+	prefix: /api/v1
+	jwt:    Auth
+)
+service poppulse {
+	@doc "M22 立即购买创建订单"
+	@handler createOrder
+	post /orders (CreateOrderReq) returns (CreateOrderResp)
+
+	@doc "M23 本人订单列表"
+	@handler listOrders
+	get /orders (OrderListReq) returns (OrderListResp)
+
+	@doc "M24 本人订单详情"
+	@handler getOrderDetail
+	get /orders/:order_id (OrderDetailReq) returns (OrderDetailResp)
+
+	@doc "M25 取消待支付订单"
+	@handler cancelOrder
+	post /orders/:order_id/cancel (CancelOrderReq) returns (CancelOrderResp)
+}
+
+// ============ 路由：支付（user） ============
+@server (
+	group:  payment
+	prefix: /api/v1
+	jwt:    Auth
+)
+service poppulse {
+	@doc "M26 模拟支付成功"
+	@handler mockPayConfirm
+	post /payments/mock/confirm (MockPayConfirmReq) returns (MockPayConfirmResp)
+
+	@doc "M27 查询本人支付结果"
+	@handler getPayment
+	get /payments/:payment_no (GetPaymentReq) returns (PaymentResp)
+}
+
+// ============ 路由：订单管理（operator） ============
+@server (
+	group:      adminOrder
+	prefix:     /api/v1
+	jwt:        Auth
+	middleware: Operator
+)
+service poppulse {
+	@doc "M28 后台订单列表"
+	@handler adminListOrders
+	get /admin/orders (AdminOrderListReq) returns (AdminOrderListResp)
+
+	@doc "M29 后台订单详情"
+	@handler adminGetOrderDetail
+	get /admin/orders/:order_id (OrderDetailReq) returns (AdminOrderDetailResp)
+
+	@doc "M30 运营确认订单完成"
+	@handler adminCompleteOrder
+	post /admin/orders/:order_id/complete (AdminCompleteOrderReq) returns (AdminCompleteOrderResp)
+}
+
+// ============ 路由：售后（user） ============
+@server (
+	group:  aftersale
+	prefix: /api/v1
+	jwt:    Auth
+)
+service poppulse {
+	@doc "M31 申请整单退款"
+	@handler createAfterSale
+	post /after-sales (CreateAfterSaleReq) returns (CreateAfterSaleResp)
+
+	@doc "M32 本人售后列表"
+	@handler listAfterSales
+	get /after-sales (AfterSaleListReq) returns (AfterSaleListResp)
+
+	@doc "M33 本人售后详情"
+	@handler getAfterSaleDetail
+	get /after-sales/:after_sale_id (AfterSaleDetailReq) returns (AfterSaleDetailResp)
+
+	@doc "M34 本人退款结果"
+	@handler getRefund
+	get /refunds/:refund_no (GetRefundReq) returns (RefundResp)
+}
+
+// ============ 路由：售后管理（operator） ============
+@server (
+	group:      adminAftersale
+	prefix:     /api/v1
+	jwt:        Auth
+	middleware: Operator
+)
+service poppulse {
+	@doc "M35 后台售后列表"
+	@handler adminListAfterSales
+	get /admin/after-sales (AdminAfterSaleListReq) returns (AdminAfterSaleListResp)
+
+	@doc "M36 后台售后详情"
+	@handler adminGetAfterSaleDetail
+	get /admin/after-sales/:after_sale_id (AfterSaleDetailReq) returns (AfterSaleDetailResp)
+
+	@doc "M37 审核售后"
+	@handler adminReviewAfterSale
+	post /admin/after-sales/:after_sale_id/review (AdminReviewAfterSaleReq) returns (AdminReviewAfterSaleResp)
+
+	@doc "M38 模拟退款成功"
+	@handler adminMockRefundConfirm
+	post /admin/refunds/mock-confirm (AdminMockRefundConfirmReq) returns (AdminMockRefundConfirmResp)
+
+	@doc "M39 后台退款查询"
+	@handler adminGetRefund
+	get /admin/refunds/:refund_no (AdminGetRefundReq) returns (RefundResp)
+}
+
