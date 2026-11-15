@@ -1,0 +1,31 @@
+{
+  "openapi": "3.0.3",
+  "info": {"title": "生鲜即时零售平台 API", "version": "1.0.0"},
+  "servers": [{"url": "/api/v1"}],
+  "security": [{"bearerAuth": []}],
+  "paths": {
+    "/auth/sms/send": {"post": {"security": [], "summary": "发送登录验证码", "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/SmsSendRequest"}}}}, "responses": {"200": {"$ref": "#/components/responses/Ok"}}}},
+    "/users/me/addresses": {"get": {"summary": "地址列表", "responses": {"200": {"$ref": "#/components/responses/Ok"}}}, "post": {"summary": "新增地址", "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/AddressRequest"}}}}, "responses": {"200": {"$ref": "#/components/responses/Ok"}}}},
+    "/ai/conversations/{conversation_id}/messages": {"post": {"summary": "AI 对话及工具调用", "parameters": [{"$ref": "#/components/parameters/ConversationId"}], "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/AiMessageRequest"}}}}, "responses": {"200": {"$ref": "#/components/responses/Ok"}}}},
+    "/orders/preview": {"post": {"summary": "订单预览", "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/OrderPreviewRequest"}}}}, "responses": {"200": {"$ref": "#/components/responses/Ok"}}}},
+    "/orders": {"post": {"summary": "创建订单", "parameters": [{"$ref": "#/components/parameters/IdempotencyKey"}], "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/CreateOrderRequest"}}}}, "responses": {"200": {"$ref": "#/components/responses/Ok"}}}, "get": {"summary": "订单列表", "responses": {"200": {"$ref": "#/components/responses/Ok"}}}},
+    "/orders/{order_id}/tracking": {"get": {"summary": "订单配送追踪", "parameters": [{"$ref": "#/components/parameters/OrderId"}], "responses": {"200": {"$ref": "#/components/responses/Ok"}}}},
+    "/merchant/orders/{order_id}/accept": {"post": {"summary": "商家接单", "parameters": [{"$ref": "#/components/parameters/OrderId"}], "responses": {"200": {"$ref": "#/components/responses/Ok"}}}},
+    "/delivery/tasks/{task_id}/location": {"post": {"summary": "骑手位置上报", "parameters": [{"$ref": "#/components/parameters/TaskId"}], "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/LocationRequest"}}}}, "responses": {"200": {"$ref": "#/components/responses/Ok"}}}},
+    "/delivery/tasks/{task_id}/deliver": {"post": {"summary": "确认送达", "parameters": [{"$ref": "#/components/parameters/TaskId"}], "responses": {"200": {"$ref": "#/components/responses/Ok"}}}}
+  },
+  "components": {
+    "securitySchemes": {"bearerAuth": {"type": "http", "scheme": "bearer", "bearerFormat": "JWT"}},
+    "parameters": {"OrderId": {"name": "order_id", "in": "path", "required": true, "schema": {"type": "integer", "format": "int64"}}, "TaskId": {"name": "task_id", "in": "path", "required": true, "schema": {"type": "integer", "format": "int64"}}, "ConversationId": {"name": "conversation_id", "in": "path", "required": true, "schema": {"type": "integer", "format": "int64"}}, "IdempotencyKey": {"name": "Idempotency-Key", "in": "header", "required": true, "schema": {"type": "string"}}},
+    "responses": {"Ok": {"description": "统一响应", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/ApiResponse"}}}}},
+    "schemas": {
+      "ApiResponse": {"type": "object", "required": ["code", "message", "data", "request_id"], "properties": {"code": {"type": "integer", "example": 0}, "message": {"type": "string", "example": "ok"}, "data": {}, "request_id": {"type": "string"}}},
+      "SmsSendRequest": {"type": "object", "required": ["mobile", "purpose"], "properties": {"mobile": {"type": "string"}, "purpose": {"type": "string", "enum": ["login", "bind"]}}},
+      "AddressRequest": {"type": "object", "required": ["contact_name", "mobile", "detail", "longitude", "latitude"], "properties": {"contact_name": {"type": "string"}, "mobile": {"type": "string"}, "detail": {"type": "string"}, "longitude": {"type": "number", "format": "double"}, "latitude": {"type": "number", "format": "double"}, "amap_poi_id": {"type": "string"}}},
+      "AiMessageRequest": {"type": "object", "required": ["content"], "properties": {"content": {"type": "string"}, "stream": {"type": "boolean", "default": true}}},
+      "OrderPreviewRequest": {"type": "object", "required": ["warehouse_id", "address_id", "items"], "properties": {"warehouse_id": {"type": "integer"}, "address_id": {"type": "integer"}, "items": {"type": "array", "items": {"type": "object", "properties": {"sku_id": {"type": "integer"}, "quantity": {"type": "integer"}}}}}},
+      "CreateOrderRequest": {"type": "object", "required": ["preview_token", "address_id"], "properties": {"preview_token": {"type": "string"}, "address_id": {"type": "integer"}, "remark": {"type": "string"}}},
+      "LocationRequest": {"type": "object", "required": ["longitude", "latitude", "reported_at"], "properties": {"longitude": {"type": "number"}, "latitude": {"type": "number"}, "accuracy_m": {"type": "number"}, "reported_at": {"type": "string", "format": "date-time"}}}
+    }
+  }
+}

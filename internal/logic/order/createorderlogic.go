@@ -19,7 +19,7 @@ type CreateOrderLogic struct {
 	svcCtx *svc.ServiceContext
 }
 
-// M22 立即购买创建订单
+// 创建订单（服务端计价，Idempotency-Key 必填）
 func NewCreateOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateOrderLogic {
 	return &CreateOrderLogic{
 		Logger: logx.WithContext(ctx),

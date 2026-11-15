@@ -1,3 +1,6 @@
+// Code scaffolded by goctl. Safe to edit.
+// goctl 1.10.2
+
 package auth
 
 import (
@@ -19,7 +22,7 @@ type LoginLogic struct {
 	svcCtx *svc.ServiceContext
 }
 
-// M03 账号密码登录
+// 登录
 func NewLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoginLogic {
 	return &LoginLogic{
 		Logger: logx.WithContext(ctx),
@@ -52,7 +55,7 @@ func (l *LoginLogic) Login(req *types.LoginReq) (resp *types.LoginResp, err erro
 	}
 
 	// 签发 JWT，claims 携带 userId 与 role
-	token, expiresAt, err := ctxdata.BuildToken(l.svcCtx.Config.Auth.AccessSecret, l.svcCtx.Config.Auth.AccessExpire, model.FormatId(u.Id), u.Role)
+	token, expiresAt, err := ctxdata.BuildToken(l.svcCtx.Config.Auth.AccessSecret, l.svcCtx.Config.Auth.AccessExpire, model.FormatId(u.Id), "user")
 	if err != nil {
 		l.Errorf("build token failed: %v", err)
 		return nil, xerr.ErrInternal

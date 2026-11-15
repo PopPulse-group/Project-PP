@@ -1,112 +1,124 @@
-# PopPulse 后端 MVP（go-zero 单体 API）
+# 生鲜零售平台后端 MVP（go-zero 单体 API）
 
-潮玩脉动 PopPulse 六人七天项目的后端 MVP 基础框架：单体 go-zero API + 单 MySQL，统一鉴权/错误码/响应结构，39 个 MVP 接口契约已固化（未实现的返回 50101 占位），各模块按分支填 logic 即可。
+生鲜即时零售平台两周项目的后端 MVP 基础框架：单体 go-zero API + MySQL + Redis，统一鉴权/错误码/响应结构，18 个 MVP 接口契约已固化（未实现的返回 50101 占位），各模块按分支填 logic 即可。此前误建的 PopPulse 潮玩电商代码已归档（tag `v0.1-poppulse-archived`）。
 
 ## 技术栈与版本（锁定）
 
 | 工具 | 版本 |
 |---|---|
-| Go | 1.25+（开发机为 1.27） |
+| Go | 1.25+ |
 | go-zero | v1.10.3（见 go.mod，不要随意升级） |
 | goctl | 1.10.2（生成 handler/logic/types 用） |
 | MySQL | 8.4（Docker Compose） |
+| Redis | 7-alpine（Docker Compose，仅缓存加速，不承载库存事实） |
 
 ## 快速启动（全新环境）
 
 前置：安装 Go、Docker Desktop（Windows 需启用 WSL2）、goctl。
 
 ```powershell
-# 1. 启动 MySQL
+# 1. 启动 MySQL + Redis
 docker compose -f deployments/docker-compose.yml up -d
 
-# 2. 初始化表结构 + 种子数据（容器名 poppulse-mysql；务必带 --default-character-set=utf8mb4，否则中文乱码）
-docker exec -i poppulse-mysql mysql -uroot -ppoppulse123 --default-character-set=utf8mb4 < deployments/migrations/001_init.sql
-docker exec -i poppulse-mysql mysql -uroot -ppoppulse123 --default-character-set=utf8mb4 < scripts/seed.sql
+# 2. 初始化表结构 + 种子数据（务必带 --default-character-set=utf8mb4，否则中文乱码）
+docker exec -i fresh-mysql mysql -uroot -ppoppulse123 --default-character-set=utf8mb4 < deployments/migrations/001_init.sql
+docker exec -i fresh-mysql mysql -uroot -ppoppulse123 --default-character-set=utf8mb4 < scripts/seed.sql
 
 # 3. 准备本地配置（仅第一次）
-Copy-Item etc/poppulse.example.yaml etc/poppulse.yaml
+Copy-Item etc/fresh.example.yaml etc/fresh.yaml
 
 # 4. 启动服务
-go run poppulse.go
+go run fresh.go
 ```
 
 验证：
 
 ```powershell
-# 健康检查
 curl http://localhost:8888/api/v1/health/live
-
-# 登录（user01/User@123456，运营 admin01/Admin@123456）
-curl -X POST http://localhost:8888/api/v1/auth/login -H "Content-Type: application/json" -d '{"username":"user01","password":"User@123456"}'
-
-# 带 token 访问
-curl http://localhost:8888/api/v1/users/me -H "Authorization: Bearer <access_token>"
+curl http://localhost:8888/api/v1/products
 ```
 
 ## 种子账号
 
-| 账号 | 密码 | 角色 |
+| 账号 | 密码 | 说明 |
 |---|---|---|
-| user01 | User@123456 | user（普通用户） |
-| admin01 | Admin@123456 | operator（运营） |
+| user01 | User@123456 | 演示用户 |
+| admin01 | Admin@123456 | 管理入口预留 |
+
+也可 `POST /api/v1/auth/register` 自行注册。
 
 ## 目录结构
 
 ```
-poppulse.api              # 接口契约 v1（39 接口，修改须经组长 A）
-poppulse.go               # 入口：统一响应/错误处理注册
-etc/poppulse.example.yaml # 配置模板；本地 etc/poppulse.yaml 不提交
-internal/config           # MySQL/Auth/Mock/PayTimeout
-internal/middleware       # operator 角色校验（admin 路由挂载）
-internal/xerr             # 业务错误码（400xx 参数、300xx 业务、50101 未实现…）
-internal/response         # {code, message, data, trace_id} 统一响应
-internal/handler|logic|types  # goctl 生成，按模块 group 分目录
-internal/model            # 数据访问（goctl model 生成 + 手写补充）
+fresh.api                 # 接口契约 v1（18 接口，修改须经组长 A）
+fresh.go                  # 入口：统一响应/错误处理注册
+etc/fresh.example.yaml    # 配置模板；本地 etc/fresh.yaml 不提交
+internal/config           # MySQL/Redis/Auth/Mock/Ai
+internal/middleware       # operator 角色校验（管理入口用）
+internal/xerr             # 业务错误码（见下表）
+internal/response         # {code, message, data} 统一响应
+internal/handler|logic|types  # goctl 生成，分组：auth/user/product/cart/order/ai/health
+internal/model            # 数据访问（统一 sqlx）
 internal/ctxdata          # JWT claims 读取与 token 生成
-deployments/migrations    # 迁移脚本（只追加，不修改已合并版本）
-scripts/seed.sql          # 种子数据；scripts/hashgen 生成密码哈希
+internal/ai               # AI 适配器接口 + MockProvider（真实模型实现同一接口）
+deployments/migrations    # 迁移脚本（上线后只追加）
+scripts/seed.sql          # 30 个生鲜商品种子；scripts/hashgen 生成密码哈希
+docs/future/              # 二期全量接口/表设计参考（api.md 等，勿当本周范围）
 docs/plans/               # 设计与计划文档
 ```
 
-## 已实现接口（D1）
+## 已实现接口
 
-- M01 `GET /api/v1/health/live` 进程存活
-- M02 `GET /api/v1/health/ready` 服务就绪（检查 MySQL，失败 503/90002）
-- M03 `POST /api/v1/auth/login` 登录（bcrypt + JWT，claims 含 userId/role）
-- M04 `GET /api/v1/users/me` 当前用户
-- M05 `PATCH /api/v1/users/me` 修改资料（PATCH 语义，未传字段保留）
+- `GET /health/live`、`GET /health/ready`（检查 MySQL+Redis）
+- `POST /auth/register`（成功即登录）、`POST /auth/login`（bcrypt + JWT）
+- `GET /users/me`
 
-其余 34 个接口路由/权限已固化，调用返回 `50101 接口尚未实现`，由各模块负责人在对应 logic 中实现。
+其余接口路由/权限已固化，调用返回 `501/50101 占位`，由各模块负责人填 logic。
 
-## 组员开发指引
+## 错误码（对齐接口文档）
 
-1. `git clone` 后按上述步骤启动成功，再切自己的分支：`git checkout -b feature/<模块>`（user/product/stock/order/payment/aftersale）
-2. 只在自己模块的 `internal/logic/<group>/` 下填业务逻辑；需要改 `poppulse.api` 或公共文件（config/xerr/response/middleware）时先在群里找组长
-3. 需要新表字段：写新的迁移脚本 `002_xxx.sql` 追加，禁止修改 `001_init.sql`
-4. 数据访问统一 `goctl model` 或 `internal/model` 手写 sqlx，同一套方式不混用
-5. 提交前：`gofmt -w .` + `go build ./...` + `go vet ./...`
-6. 涉及钱：金额一律整数分；涉及 ID：JSON 输出一律字符串
-7. admin 接口默认带 operator 校验，仍须在 logic 里校验数据归属（本人订单 404 规则等）
+| code | 含义 |
+|---|---|
+| 40001 | 参数错误 |
+| 40101 | 未登录或 token 失效 |
+| 40102 | 用户名或密码错误 |
+| 40301 | 无权限 |
+| 40401 | 资源不存在 |
+| 40901 | 幂等键重复但请求内容不同 |
+| 40902 | 库存不足 |
+| 40903 | 订单状态不允许此操作 |
+| 42210/42211 | AI 输出校验失败 / 食材无在售匹配 |
+| 42901 | 限流 |
+| 50101 | 接口未实现占位 |
+| 50001 | 服务内部错误 |
+| 50301 | 外部服务降级 |
+
+## 分工与分支
+
+| 成员 | 分支 | 模块 |
+|---|---|---|
+| A | `feature/account` | 注册登录、JWT、地址、工程集成 |
+| B | `feature/product` | 分类/商品/购物车、热点缓存与并发聚合 |
+| C | `feature/trade` | 事务下单、防超卖、幂等、模拟支付、取消 |
+| D | `feature/delivery` | 配送事件、超时扫描 worker pool |
+| E | `feature/ai` | AI 适配器真实接入、限流降级 |
+| F | `feature/qa` | 契约维护、集成测试、压测 |
 
 ## 关键规则（违反 = 返工）
 
-- 库存防超卖：`UPDATE ... WHERE total - reserved - sold >= ?` 条件更新 + 检查影响行数，禁止先查后扣
-- 幂等：创建订单必须校验 `Idempotency-Key` 请求头；同键同参返回原结果、同键异参返回 409/40002
-- 状态机：非法状态转换拒绝；取消与支付竞争只有一种合法终态
-- 模拟支付/退款：仅 `Mock.Enabled: true` 时可用，生产必须关闭
-- 越权：非本人资源统一 404；已认证但无后台角色返回 403
+1. **防超卖**：`UPDATE products SET stock=stock-? WHERE id=? AND stock>=?` 条件更新 + 检查影响行数，多商品按 id 排序扣减，任一失败整体回滚
+2. **幂等**：下单必须校验 `Idempotency-Key`；同键同参返回原订单、同键异参 409/40901
+3. **计价**：服务端按 DB 实时价格计算，禁止采信客户端金额
+4. **状态机**：pending_payment → paid → delivering → delivered；取消/超时只能从 pending_payment；逆向跳跃拒绝
+5. **金额整数分（bigint）**；ID JSON 输出字符串
+6. **越权**：非本人资源 404；地址/订单/购物车全部按 user_id 过滤
+7. **AI**：只读商品；不虚构 SKU/价格/库存；响应带 mock 字段；并发信号量隔离
+8. **模拟支付/履约**：仅 `Mock.Enabled: true` 可用，生产必须 false
 
-## 关闭模拟能力（验收/演示用）
+## 验收硬指标（计划书）
 
-编辑 `etc/poppulse.yaml`：
-
-```yaml
-Mock:
-  Enabled: false
-```
-
-## 协作约定
-
-- `main` 始终可启动；每次合并至少一人复核
-- 迁移脚本只追加；公共 .api 由组长协调，禁止多人直接覆盖
-- 提交信息格式：`<模块>: <做了什么>`，如 `order: 实现创建订单事务`
+- 库存 100，200 个不同幂等键并发抢购单件：恰成功 100 单、无负库存
+- 同一键并发 50 次：仅一笔订单、一次扣减
+- 支付与取消竞争：仅一种合法终态，不重复释放
+- 超时任务重跑无副作用；普通用户不能读写他人地址/订单
+- AI 非法 JSON、超时有可读结果；Mock/真实模式可辨识

@@ -19,7 +19,7 @@ type ListOrdersLogic struct {
 	svcCtx *svc.ServiceContext
 }
 
-// M23 本人订单列表
+// 本人订单列表
 func NewListOrdersLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ListOrdersLogic {
 	return &ListOrdersLogic{
 		Logger: logx.WithContext(ctx),

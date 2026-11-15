@@ -11,7 +11,7 @@ import (
 	"poppulse/internal/svc"
 )
 
-// M02 服务就绪
+// 服务就绪（MySQL/Redis）
 func HealthReadyHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		l := health.NewHealthReadyLogic(r.Context(), svcCtx)

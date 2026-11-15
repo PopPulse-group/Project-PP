@@ -30,26 +30,24 @@ func New(code int, msg string, status int) *CodeError {
 // 参数与权限
 var (
 	ErrInvalidParam   = New(40001, "参数错误", 400)
-	ErrIdempotency    = New(40002, "幂等键冲突：相同幂等键但请求参数不同", 409)
-	ErrUnauthorized   = New(40101, "未登录或登录已过期", 401)
-	ErrForbidden      = New(40301, "无权限执行该操作", 403)
+	ErrIdempotency    = New(40901, "幂等键重复但请求内容不同", 409)
+	ErrUnauthorized   = New(40101, "未登录或 token 失效", 401)
+	ErrForbidden      = New(40301, "无权限", 403)
 	ErrNotFound       = New(40401, "资源不存在", 404)
-	ErrStateConflict  = New(40901, "状态冲突：当前状态不允许该操作", 409)
-	ErrNotImplemented = New(50101, "接口尚未实现（D1 占位）", 501)
+	ErrNotImplemented = New(50101, "接口尚未实现（占位）", 501)
 	ErrInternal       = New(50001, "服务内部错误", 500)
-	ErrServiceDegrade = New(90002, "依赖服务不可用", 503)
+	ErrServiceDegrade = New(50301, "外部服务降级，稍后重试", 503)
+	ErrRateLimited    = New(42901, "请求过于频繁", 429)
 )
 
 // 业务错误（按需使用 NewBiz 创建，或直接使用预定义）
 func NewBiz(code int, msg string) *CodeError { return New(code, msg, 422) }
 
 var (
-	ErrStockInsufficient   = NewBiz(30001, "库存不足")
-	ErrOrderStateInvalid   = NewBiz(30002, "订单状态不允许该操作")
-	ErrMockDisabled        = NewBiz(30003, "模拟能力未启用")
-	ErrPaymentStateInvalid = NewBiz(30004, "支付状态不允许该操作")
-	ErrAfterSaleInvalid    = NewBiz(30005, "售后状态不允许该操作")
-	ErrRefundExceed        = NewBiz(30006, "退款金额超过可退额度")
-	ErrUserRole            = NewBiz(30007, "账号角色不满足要求")
-	ErrLoginFailed         = New(40003, "用户名或密码错误", 401)
+	ErrStockInsufficient = New(40902, "库存不足", 409)
+	ErrOrderStateInvalid = New(40903, "订单状态不允许此操作", 409)
+	ErrMockDisabled      = NewBiz(40904, "模拟能力未启用")
+	ErrAiOutputInvalid   = NewBiz(42210, "AI 输出校验失败")
+	ErrIngredientMissing = NewBiz(42211, "部分食材无在售商品匹配")
+	ErrLoginFailed       = New(40102, "用户名或密码错误", 401)
 )

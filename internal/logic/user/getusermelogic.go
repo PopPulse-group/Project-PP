@@ -1,3 +1,6 @@
+// Code scaffolded by goctl. Safe to edit.
+// goctl 1.10.2
+
 package user
 
 import (
@@ -20,7 +23,7 @@ type GetUserMeLogic struct {
 	svcCtx *svc.ServiceContext
 }
 
-// M04 当前用户
+// 当前用户
 func NewGetUserMeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetUserMeLogic {
 	return &GetUserMeLogic{
 		Logger: logx.WithContext(ctx),

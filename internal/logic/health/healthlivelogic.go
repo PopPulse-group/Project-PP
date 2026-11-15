@@ -1,3 +1,6 @@
+// Code scaffolded by goctl. Safe to edit.
+// goctl 1.10.2
+
 package health
 
 import (
@@ -16,7 +19,7 @@ type HealthLiveLogic struct {
 	svcCtx *svc.ServiceContext
 }
 
-// M01 进程存活
+// 进程存活
 func NewHealthLiveLogic(ctx context.Context, svcCtx *svc.ServiceContext) *HealthLiveLogic {
 	return &HealthLiveLogic{
 		Logger: logx.WithContext(ctx),

@@ -19,7 +19,7 @@ type GetProductDetailLogic struct {
 	svcCtx *svc.ServiceContext
 }
 
-// M09 商品详情
+// 商品详情（含可售库存）
 func NewGetProductDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetProductDetailLogic {
 	return &GetProductDetailLogic{
 		Logger: logx.WithContext(ctx),

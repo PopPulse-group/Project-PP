@@ -12,7 +12,7 @@ import (
 	"poppulse/internal/types"
 )
 
-// M08 商品列表
+// 商品列表（分类/关键词/分页）
 func ListProductsHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req types.ProductListReq

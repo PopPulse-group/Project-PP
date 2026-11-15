@@ -12,7 +12,7 @@ import (
 	"poppulse/internal/types"
 )
 
-// M09 商品详情
+// 商品详情（含可售库存）
 func GetProductDetailHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req types.ProductDetailReq

@@ -19,7 +19,7 @@ type CancelOrderLogic struct {
 	svcCtx *svc.ServiceContext
 }
 
-// M25 取消待支付订单
+// 取消待支付订单（一次性释放库存）
 func NewCancelOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CancelOrderLogic {
 	return &CancelOrderLogic{
 		Logger: logx.WithContext(ctx),
@@ -28,6 +28,6 @@ func NewCancelOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Cance
 	}
 }
 
-func (l *CancelOrderLogic) CancelOrder(req *types.CancelOrderReq) (resp *types.CancelOrderResp, err error) {
+func (l *CancelOrderLogic) CancelOrder(req *types.OrderIdReq) (resp *types.CancelOrderResp, err error) {
 	return nil, xerr.ErrNotImplemented
 }

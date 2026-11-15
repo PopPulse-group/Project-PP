@@ -19,7 +19,7 @@ type GetOrderDetailLogic struct {
 	svcCtx *svc.ServiceContext
 }
 
-// M24 本人订单详情
+// 本人订单详情
 func NewGetOrderDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetOrderDetailLogic {
 	return &GetOrderDetailLogic{
 		Logger: logx.WithContext(ctx),
@@ -28,6 +28,6 @@ func NewGetOrderDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Ge
 	}
 }
 
-func (l *GetOrderDetailLogic) GetOrderDetail(req *types.OrderDetailReq) (resp *types.OrderDetailResp, err error) {
+func (l *GetOrderDetailLogic) GetOrderDetail(req *types.OrderIdReq) (resp *types.OrderDetailResp, err error) {
 	return nil, xerr.ErrNotImplemented
 }

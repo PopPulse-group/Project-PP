@@ -1,0 +1,26 @@
+# 复制本文件为 etc/fresh.yaml 后按需修改本地值；本文件提交仓库，fresh.yaml 不提交
+Name: fresh-api
+Host: 0.0.0.0
+Port: 8888
+Mode: dev
+Timeout: 5000
+
+Mysql:
+  DataSource: "root:poppulse123@tcp(127.0.0.1:3306)/fresh?charset=utf8mb4&parseTime=true&loc=Local"
+
+Redis:
+  Host: 127.0.0.1:6379
+
+Auth:
+  AccessSecret: "fresh-dev-secret-change-me-in-prod"
+  AccessExpire: 86400
+
+PayTimeoutMinutes: 15
+
+Mock:
+  Enabled: true
+
+Ai:
+  Provider: mock
+  TimeoutMs: 10000
+  MaxConcurrent: 5

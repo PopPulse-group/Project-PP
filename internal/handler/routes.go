@@ -6,15 +6,11 @@ package handler
 import (
 	"net/http"
 
-	adminAftersale "poppulse/internal/handler/adminAftersale"
-	adminOrder "poppulse/internal/handler/adminOrder"
-	adminProduct "poppulse/internal/handler/adminProduct"
-	adminStock "poppulse/internal/handler/adminStock"
-	aftersale "poppulse/internal/handler/aftersale"
+	ai "poppulse/internal/handler/ai"
 	auth "poppulse/internal/handler/auth"
+	cart "poppulse/internal/handler/cart"
 	health "poppulse/internal/handler/health"
 	order "poppulse/internal/handler/order"
-	payment "poppulse/internal/handler/payment"
 	product "poppulse/internal/handler/product"
 	user "poppulse/internal/handler/user"
 	"poppulse/internal/svc"
@@ -24,190 +20,18 @@ import (
 
 func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	server.AddRoutes(
-		rest.WithMiddlewares(
-			[]rest.Middleware{serverCtx.Operator},
-			[]rest.Route{
-				{
-					// M35 后台售后列表
-					Method:  http.MethodGet,
-					Path:    "/admin/after-sales",
-					Handler: adminAftersale.AdminListAfterSalesHandler(serverCtx),
-				},
-				{
-					// M36 后台售后详情
-					Method:  http.MethodGet,
-					Path:    "/admin/after-sales/:after_sale_id",
-					Handler: adminAftersale.AdminGetAfterSaleDetailHandler(serverCtx),
-				},
-				{
-					// M37 审核售后
-					Method:  http.MethodPost,
-					Path:    "/admin/after-sales/:after_sale_id/review",
-					Handler: adminAftersale.AdminReviewAfterSaleHandler(serverCtx),
-				},
-				{
-					// M39 后台退款查询
-					Method:  http.MethodGet,
-					Path:    "/admin/refunds/:refund_no",
-					Handler: adminAftersale.AdminGetRefundHandler(serverCtx),
-				},
-				{
-					// M38 模拟退款成功
-					Method:  http.MethodPost,
-					Path:    "/admin/refunds/mock-confirm",
-					Handler: adminAftersale.AdminMockRefundConfirmHandler(serverCtx),
-				},
-			}...,
-		),
-		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
-		rest.WithPrefix("/api/v1"),
-	)
-
-	server.AddRoutes(
-		rest.WithMiddlewares(
-			[]rest.Middleware{serverCtx.Operator},
-			[]rest.Route{
-				{
-					// M28 后台订单列表
-					Method:  http.MethodGet,
-					Path:    "/admin/orders",
-					Handler: adminOrder.AdminListOrdersHandler(serverCtx),
-				},
-				{
-					// M29 后台订单详情
-					Method:  http.MethodGet,
-					Path:    "/admin/orders/:order_id",
-					Handler: adminOrder.AdminGetOrderDetailHandler(serverCtx),
-				},
-				{
-					// M30 运营确认订单完成
-					Method:  http.MethodPost,
-					Path:    "/admin/orders/:order_id/complete",
-					Handler: adminOrder.AdminCompleteOrderHandler(serverCtx),
-				},
-			}...,
-		),
-		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
-		rest.WithPrefix("/api/v1"),
-	)
-
-	server.AddRoutes(
-		rest.WithMiddlewares(
-			[]rest.Middleware{serverCtx.Operator},
-			[]rest.Route{
-				{
-					// M10 创建 IP
-					Method:  http.MethodPost,
-					Path:    "/admin/ips",
-					Handler: adminProduct.CreateIpHandler(serverCtx),
-				},
-				{
-					// M12 创建商品草稿
-					Method:  http.MethodPost,
-					Path:    "/admin/products",
-					Handler: adminProduct.CreateProductHandler(serverCtx),
-				},
-				{
-					// M13 后台商品列表
-					Method:  http.MethodGet,
-					Path:    "/admin/products",
-					Handler: adminProduct.AdminListProductsHandler(serverCtx),
-				},
-				{
-					// M14 后台商品详情
-					Method:  http.MethodGet,
-					Path:    "/admin/products/:product_id",
-					Handler: adminProduct.AdminGetProductDetailHandler(serverCtx),
-				},
-				{
-					// M15 编辑商品
-					Method:  http.MethodPatch,
-					Path:    "/admin/products/:product_id",
-					Handler: adminProduct.UpdateProductHandler(serverCtx),
-				},
-				{
-					// M17 新增 SKU
-					Method:  http.MethodPost,
-					Path:    "/admin/products/:product_id/skus",
-					Handler: adminProduct.CreateSkuHandler(serverCtx),
-				},
-				{
-					// M16 上架或下架
-					Method:  http.MethodPut,
-					Path:    "/admin/products/:product_id/status",
-					Handler: adminProduct.UpdateProductStatusHandler(serverCtx),
-				},
-				{
-					// M11 创建系列
-					Method:  http.MethodPost,
-					Path:    "/admin/series",
-					Handler: adminProduct.CreateSeriesHandler(serverCtx),
-				},
-				{
-					// M18 修改 SKU
-					Method:  http.MethodPatch,
-					Path:    "/admin/skus/:sku_id",
-					Handler: adminProduct.UpdateSkuHandler(serverCtx),
-				},
-			}...,
-		),
-		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
-		rest.WithPrefix("/api/v1"),
-	)
-
-	server.AddRoutes(
-		rest.WithMiddlewares(
-			[]rest.Middleware{serverCtx.Operator},
-			[]rest.Route{
-				{
-					// M21 库存流水
-					Method:  http.MethodGet,
-					Path:    "/admin/stock-logs",
-					Handler: adminStock.ListStockLogsHandler(serverCtx),
-				},
-				{
-					// M19 库存余额
-					Method:  http.MethodGet,
-					Path:    "/admin/stocks/:sku_id",
-					Handler: adminStock.GetStockHandler(serverCtx),
-				},
-				{
-					// M20 调整可售库存
-					Method:  http.MethodPost,
-					Path:    "/admin/stocks/adjust",
-					Handler: adminStock.AdjustStockHandler(serverCtx),
-				},
-			}...,
-		),
-		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
-		rest.WithPrefix("/api/v1"),
-	)
-
-	server.AddRoutes(
 		[]rest.Route{
 			{
-				// M31 申请整单退款
+				// 生成菜谱推荐（人数/预算/口味/忌口 → 结构化菜谱 + 在售 SKU 匹配）
 				Method:  http.MethodPost,
-				Path:    "/after-sales",
-				Handler: aftersale.CreateAfterSaleHandler(serverCtx),
+				Path:    "/ai/meal-plans",
+				Handler: ai.CreateMealPlanHandler(serverCtx),
 			},
 			{
-				// M32 本人售后列表
-				Method:  http.MethodGet,
-				Path:    "/after-sales",
-				Handler: aftersale.ListAfterSalesHandler(serverCtx),
-			},
-			{
-				// M33 本人售后详情
-				Method:  http.MethodGet,
-				Path:    "/after-sales/:after_sale_id",
-				Handler: aftersale.GetAfterSaleDetailHandler(serverCtx),
-			},
-			{
-				// M34 本人退款结果
-				Method:  http.MethodGet,
-				Path:    "/refunds/:refund_no",
-				Handler: aftersale.GetRefundHandler(serverCtx),
+				// 确认推荐并加入购物车（幂等合并，不直接扣款）
+				Method:  http.MethodPost,
+				Path:    "/ai/meal-plans/confirm",
+				Handler: ai.ConfirmMealPlanHandler(serverCtx),
 			},
 		},
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
@@ -217,11 +41,17 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	server.AddRoutes(
 		[]rest.Route{
 			{
-				// M03 账号密码登录
+				// 登录
 				Method:  http.MethodPost,
 				Path:    "/auth/login",
 				Handler: auth.LoginHandler(serverCtx),
 			},
+			{
+				// 注册（成功即登录，返回 token）
+				Method:  http.MethodPost,
+				Path:    "/auth/register",
+				Handler: auth.RegisterHandler(serverCtx),
+			},
 		},
 		rest.WithPrefix("/api/v1"),
 	)
@@ -229,13 +59,44 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	server.AddRoutes(
 		[]rest.Route{
 			{
-				// M01 进程存活
+				// 查看购物车（实时价格与库存）
+				Method:  http.MethodGet,
+				Path:    "/cart",
+				Handler: cart.GetCartHandler(serverCtx),
+			},
+			{
+				// 加购（同商品合并数量）
+				Method:  http.MethodPost,
+				Path:    "/cart/items",
+				Handler: cart.AddCartItemHandler(serverCtx),
+			},
+			{
+				// 改数量（0 视为删除）
+				Method:  http.MethodPatch,
+				Path:    "/cart/items/:cart_item_id",
+				Handler: cart.UpdateCartItemHandler(serverCtx),
+			},
+			{
+				// 删除明细
+				Method:  http.MethodDelete,
+				Path:    "/cart/items/:cart_item_id",
+				Handler: cart.DeleteCartItemHandler(serverCtx),
+			},
+		},
+		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
+		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				// 进程存活
 				Method:  http.MethodGet,
 				Path:    "/health/live",
 				Handler: health.HealthLiveHandler(serverCtx),
 			},
 			{
-				// M02 服务就绪
+				// 服务就绪（MySQL/Redis）
 				Method:  http.MethodGet,
 				Path:    "/health/ready",
 				Handler: health.HealthReadyHandler(serverCtx),
@@ -247,47 +108,40 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	server.AddRoutes(
 		[]rest.Route{
 			{
-				// M22 立即购买创建订单
+				// 创建订单（服务端计价，Idempotency-Key 必填）
 				Method:  http.MethodPost,
 				Path:    "/orders",
 				Handler: order.CreateOrderHandler(serverCtx),
 			},
 			{
-				// M23 本人订单列表
+				// 本人订单列表
 				Method:  http.MethodGet,
 				Path:    "/orders",
 				Handler: order.ListOrdersHandler(serverCtx),
 			},
 			{
-				// M24 本人订单详情
+				// 本人订单详情
 				Method:  http.MethodGet,
 				Path:    "/orders/:order_id",
 				Handler: order.GetOrderDetailHandler(serverCtx),
 			},
 			{
-				// M25 取消待支付订单
+				// 取消待支付订单（一次性释放库存）
 				Method:  http.MethodPost,
 				Path:    "/orders/:order_id/cancel",
 				Handler: order.CancelOrderHandler(serverCtx),
 			},
-		},
-		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
-		rest.WithPrefix("/api/v1"),
-	)
-
-	server.AddRoutes(
-		[]rest.Route{
 			{
-				// M27 查询本人支付结果
+				// 查询模拟配送进度
 				Method:  http.MethodGet,
-				Path:    "/payments/:payment_no",
-				Handler: payment.GetPaymentHandler(serverCtx),
+				Path:    "/orders/:order_id/delivery",
+				Handler: order.GetDeliveryHandler(serverCtx),
 			},
 			{
-				// M26 模拟支付成功
+				// 模拟支付（仅 Mock.Enabled 时可用）
 				Method:  http.MethodPost,
-				Path:    "/payments/mock/confirm",
-				Handler: payment.MockPayConfirmHandler(serverCtx),
+				Path:    "/orders/:order_id/mock-pay",
+				Handler: order.MockPayHandler(serverCtx),
 			},
 		},
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
@@ -297,28 +151,22 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	server.AddRoutes(
 		[]rest.Route{
 			{
-				// M06 IP 列表
+				// 分类列表
 				Method:  http.MethodGet,
-				Path:    "/ips",
-				Handler: product.ListIpsHandler(serverCtx),
+				Path:    "/categories",
+				Handler: product.ListCategoriesHandler(serverCtx),
 			},
 			{
-				// M08 商品列表
+				// 商品列表（分类/关键词/分页）
 				Method:  http.MethodGet,
 				Path:    "/products",
 				Handler: product.ListProductsHandler(serverCtx),
 			},
 			{
-				// M09 商品详情
+				// 商品详情（含可售库存）
 				Method:  http.MethodGet,
 				Path:    "/products/:product_id",
 				Handler: product.GetProductDetailHandler(serverCtx),
-			},
-			{
-				// M07 系列列表
-				Method:  http.MethodGet,
-				Path:    "/series",
-				Handler: product.ListSeriesHandler(serverCtx),
 			},
 		},
 		rest.WithPrefix("/api/v1"),
@@ -327,16 +175,28 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	server.AddRoutes(
 		[]rest.Route{
 			{
-				// M04 当前用户
+				// 当前用户
 				Method:  http.MethodGet,
 				Path:    "/users/me",
 				Handler: user.GetUserMeHandler(serverCtx),
 			},
 			{
-				// M05 修改个人资料
-				Method:  http.MethodPatch,
-				Path:    "/users/me",
-				Handler: user.UpdateUserMeHandler(serverCtx),
+				// 本人地址列表
+				Method:  http.MethodGet,
+				Path:    "/users/me/addresses",
+				Handler: user.ListAddressesHandler(serverCtx),
+			},
+			{
+				// 新增地址
+				Method:  http.MethodPost,
+				Path:    "/users/me/addresses",
+				Handler: user.CreateAddressHandler(serverCtx),
+			},
+			{
+				// 删除地址（仅本人）
+				Method:  http.MethodDelete,
+				Path:    "/users/me/addresses/:address_id",
+				Handler: user.DeleteAddressHandler(serverCtx),
 			},
 		},
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),

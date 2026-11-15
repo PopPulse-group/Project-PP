@@ -11,7 +11,7 @@ import (
 	"poppulse/internal/svc"
 )
 
-// M04 当前用户
+// 当前用户
 func GetUserMeHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		l := user.NewGetUserMeLogic(r.Context(), svcCtx)

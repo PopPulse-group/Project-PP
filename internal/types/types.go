@@ -3,174 +3,28 @@
 
 package types
 
-type AdjustStockReq struct {
-	SkuId  string `json:"sku_id"`
-	Delta  int64  `json:"delta"` // 正数入库、负数扣减
-	Reason string `json:"reason"`
+type AddCartItemReq struct {
+	ProductId string `json:"product_id"`
+	Quantity  int64  `json:"quantity"` // 1-99
 }
 
-type AdjustStockResp struct {
-	SkuId     string `json:"sku_id"`
-	Available int64  `json:"available"`
+type AddressIdReq struct {
+	AddressId string `path:"address_id"`
 }
 
-type AdminAfterSaleDetailReq struct {
-	AfterSaleId string `path:"after_sale_id"`
+type AddressItem struct {
+	Id          string `json:"id"`
+	ContactName string `json:"contact_name"`
+	Mobile      string `json:"mobile"`
+	Province    string `json:"province"`
+	City        string `json:"city"`
+	Detail      string `json:"detail"`
+	IsDefault   bool   `json:"is_default"`
+	CreatedAt   string `json:"created_at"`
 }
 
-type AdminAfterSaleListReq struct {
-	Status string `form:"status,optional"`
-	PageReq
-}
-
-type AdminAfterSaleListResp struct {
-	List  []AfterSaleItem `json:"list"`
-	Total int64           `json:"total"`
-}
-
-type AdminCompleteOrderReq struct {
-	OrderId string  `path:"order_id"`
-	Note    *string `json:"note,optional"`
-}
-
-type AdminCompleteOrderResp struct {
-	OrderId string `json:"order_id"`
-	Status  string `json:"status"`
-}
-
-type AdminGetRefundReq struct {
-	RefundNo string `path:"refund_no"`
-}
-
-type AdminMockRefundConfirmReq struct {
-	RefundNo string `json:"refund_no"`
-}
-
-type AdminMockRefundConfirmResp struct {
-	RefundNo   string `json:"refund_no"`
-	Status     string `json:"status"`
-	RefundedAt string `json:"refunded_at"`
-}
-
-type AdminOrderDetailResp struct {
-	Order OrderDetail `json:"order"`
-}
-
-type AdminOrderItem struct {
-	OrderItem
-	UserId   string `json:"user_id"`
-	Username string `json:"username,optional"`
-}
-
-type AdminOrderListReq struct {
-	UserId string `form:"user_id,optional"`
-	Status string `form:"status,optional"`
-	PageReq
-}
-
-type AdminOrderListResp struct {
-	List  []AdminOrderItem `json:"list"`
-	Total int64            `json:"total"`
-}
-
-type AdminProductDetail struct {
-	AdminProductItem
-	Skus []AdminSkuItem `json:"skus"`
-}
-
-type AdminProductDetailReq struct {
-	ProductId string `path:"product_id"`
-}
-
-type AdminProductDetailResp struct {
-	Product AdminProductDetail `json:"product"`
-}
-
-type AdminProductItem struct {
-	Id            string `json:"id"`
-	IpId          string `json:"ip_id"`
-	SeriesId      string `json:"series_id"`
-	Title         string `json:"title"`
-	Description   string `json:"description"`
-	CoverImage    string `json:"cover_image"`
-	Status        string `json:"status"` // on_sale | off_sale
-	SaleStartTime string `json:"sale_start_time,optional"`
-	CreatedAt     string `json:"created_at"`
-	UpdatedAt     string `json:"updated_at"`
-}
-
-type AdminProductListReq struct {
-	Keyword string `form:"keyword,optional"`
-	Status  string `form:"status,optional"`
-	PageReq
-}
-
-type AdminProductListResp struct {
-	List  []AdminProductItem `json:"list"`
-	Total int64              `json:"total"`
-}
-
-type AdminReviewAfterSaleReq struct {
-	AfterSaleId string  `path:"after_sale_id"`
-	Action      string  `json:"action"` // approve | reject
-	Reason      *string `json:"reason,optional"`
-}
-
-type AdminReviewAfterSaleResp struct {
-	AfterSaleId string `json:"after_sale_id"`
-	Status      string `json:"status"`
-}
-
-type AdminSkuItem struct {
-	Id        string `json:"id"`
-	Name      string `json:"name"`
-	Price     int64  `json:"price"`
-	Status    string `json:"status"`
-	Stock     int64  `json:"stock"`
-	Available int64  `json:"available"`
-	Reserved  int64  `json:"reserved"`
-	Sold      int64  `json:"sold"`
-}
-
-type AfterSaleDetail struct {
-	AfterSaleItem
-	UserId       string `json:"user_id"`
-	Reason       string `json:"reason"`
-	Description  string `json:"description"`
-	ReviewedAt   string `json:"reviewed_at,optional"`
-	RejectReason string `json:"reject_reason,optional"`
-	CompletedAt  string `json:"completed_at,optional"`
-}
-
-type AfterSaleDetailReq struct {
-	AfterSaleId string `path:"after_sale_id"`
-}
-
-type AfterSaleDetailResp struct {
-	AfterSale AfterSaleDetail `json:"after_sale"`
-}
-
-type AfterSaleItem struct {
-	Id        string `json:"id"`
-	OrderId   string `json:"order_id"`
-	RefundNo  string `json:"refund_no"`
-	Amount    int64  `json:"amount"`
-	Status    string `json:"status"` // pending_review | rejected | processing | completed
-	CreatedAt string `json:"created_at"`
-}
-
-type AfterSaleListReq struct {
-	Status string `form:"status,optional"`
-	PageReq
-}
-
-type AfterSaleListResp struct {
-	List  []AfterSaleItem `json:"list"`
-	Total int64           `json:"total"`
-}
-
-type CancelOrderReq struct {
-	OrderId string `path:"order_id"`
+type AddressListResp struct {
+	List []AddressItem `json:"list"`
 }
 
 type CancelOrderResp struct {
@@ -178,93 +32,94 @@ type CancelOrderResp struct {
 	Status  string `json:"status"`
 }
 
-type CreateAfterSaleReq struct {
-	OrderId     string  `json:"order_id"`
-	Reason      string  `json:"reason"`
-	Description *string `json:"description,optional"`
+type CartItem struct {
+	Id            string `json:"id"`
+	ProductId     string `json:"product_id"`
+	ProductName   string `json:"product_name"`
+	Unit          string `json:"unit"`
+	Price         int64  `json:"price"` // 实时单价，整数分
+	Quantity      int64  `json:"quantity"`
+	Amount        int64  `json:"amount"` // price * quantity
+	Stock         int64  `json:"stock"`
+	ProductStatus string `json:"product_status"`
 }
 
-type CreateAfterSaleResp struct {
-	AfterSaleId string `json:"after_sale_id"`
-	RefundNo    string `json:"refund_no"`
-	Amount      int64  `json:"amount"`
-	Status      string `json:"status"` // pending_review
+type CartItemIdReq struct {
+	CartItemId string `path:"cart_item_id"`
 }
 
-type CreateEntityResp struct {
-	Id string `json:"id"`
+type CartResp struct {
+	Items       []CartItem `json:"items"`
+	TotalAmount int64      `json:"total_amount"`
 }
 
-type CreateIpReq struct {
-	Name        string  `json:"name"`
-	Description *string `json:"description,optional"`
+type CategoryItem struct {
+	Id     string `json:"id"`
+	Name   string `json:"name"`
+	SortNo int64  `json:"sort_no"`
+}
+
+type CategoryListResp struct {
+	List []CategoryItem `json:"list"`
+}
+
+type ConfirmMealPlanReq struct {
+	SessionId      string   `json:"session_id"`
+	RecipeIds      []string `json:"recipe_ids"` // 选中的菜谱
+	IdempotencyKey string   `header:"Idempotency-Key"`
+}
+
+type ConfirmMealPlanResp struct {
+	AddedItems  int64 `json:"added_items"`  // 本次新增明细数
+	MergedItems int64 `json:"merged_items"` // 合并已有明细数
+	TotalAmount int64 `json:"total_amount"`
+}
+
+type CreateAddressReq struct {
+	ContactName string `json:"contact_name"`
+	Mobile      string `json:"mobile"`
+	Province    string `json:"province"`
+	City        string `json:"city"`
+	Detail      string `json:"detail"`
+	IsDefault   bool   `json:"is_default,optional"`
+}
+
+type CreateMealPlanReq struct {
+	PeopleCount int64    `json:"people_count"`    // 1-20
+	BudgetCents int64    `json:"budget_cents"`    // 总预算，整数分
+	Tastes      []string `json:"tastes,optional"` // 口味偏好，如 川菜、清淡
+	Avoids      []string `json:"avoid,optional"`  // 忌口/过敏，如 香菜、花生
 }
 
 type CreateOrderReq struct {
-	IdempotencyKey string `header:"Idempotency-Key"` // 16-64 字符，建议 UUID
-	SkuId          string `json:"sku_id"`
-	Quantity       int64  `json:"quantity"` // 1-99
+	IdempotencyKey string           `header:"Idempotency-Key"` // 16-64 字符，建议 UUID
+	Items          []OrderItemInput `json:"items"`
+	Remark         string           `json:"remark,optional"`
 }
 
 type CreateOrderResp struct {
-	OrderId  string `json:"order_id"`
-	Amount   int64  `json:"amount"`
-	Status   string `json:"status"`
-	ExpireAt string `json:"expire_at"` // 支付期限 RFC3339
+	OrderId     string `json:"order_id"`
+	TotalAmount int64  `json:"total_amount"`
+	Status      string `json:"status"`
+	ExpireAt    string `json:"expire_at"`
 }
 
-type CreateProductReq struct {
-	IpId          string  `json:"ip_id"`
-	SeriesId      *string `json:"series_id,optional"`
-	Title         string  `json:"title"`
-	Description   *string `json:"description,optional"`
-	CoverImage    *string `json:"cover_image,optional"`
-	SaleStartTime *string `json:"sale_start_time,optional"` // RFC3339
+type DeliveryEventItem struct {
+	Id          string `json:"id"`
+	EventType   string `json:"event_type"` // paid | sorting | delivering | delivered | timed_out
+	Description string `json:"description"`
+	OccurredAt  string `json:"occurred_at"`
 }
 
-type CreateSeriesReq struct {
-	IpId        string  `json:"ip_id"`
-	Name        string  `json:"name"`
-	Description *string `json:"description,optional"`
-}
-
-type CreateSkuReq struct {
-	ProductId string `path:"product_id"`
-	Name      string `json:"name"`
-	Price     int64  `json:"price"`
-}
-
-type GetPaymentReq struct {
-	PaymentNo string `path:"payment_no"`
-}
-
-type GetRefundReq struct {
-	RefundNo string `path:"refund_no"`
-}
-
-type GetStockReq struct {
-	SkuId string `path:"sku_id"`
+type DeliveryResp struct {
+	OrderId string              `json:"order_id"`
+	Status  string              `json:"order_status"`
+	Events  []DeliveryEventItem `json:"events"`
 }
 
 type HealthResp struct {
 	Status string `json:"status"`
 	Time   string `json:"time"`
-}
-
-type IpItem struct {
-	Id          string `json:"id"`
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	CreatedAt   string `json:"created_at"`
-}
-
-type IpListReq struct {
-	PageReq
-}
-
-type IpListResp struct {
-	List  []IpItem `json:"list"`
-	Total int64    `json:"total"`
 }
 
 type LoginReq struct {
@@ -278,56 +133,64 @@ type LoginResp struct {
 	User        UserInfo `json:"user"`
 }
 
-type MockPayConfirmReq struct {
-	OrderId string `json:"order_id"`
+type MealPlanResp struct {
+	SessionId   string           `json:"session_id"`
+	PeopleCount int64            `json:"people_count"`
+	BudgetCents int64            `json:"budget_cents"`
+	Recipes     []RecipeWithSkus `json:"recipes"`
+	AvoidHint   string           `json:"avoid_hint,optional"`
+	Mock        bool             `json:"mock"` // 是否 Mock 生成，演示必须可辨识
 }
 
-type MockPayConfirmResp struct {
-	PaymentNo string `json:"payment_no"`
-	OrderId   string `json:"order_id"`
-	Amount    int64  `json:"amount"`
-	Status    string `json:"status"` // success
-	PaidAt    string `json:"paid_at"`
+type MockPayResp struct {
+	OrderId string `json:"order_id"`
+	Status  string `json:"status"` // paid
+	PaidAt  string `json:"paid_at"`
 }
 
 type OrderDetail struct {
-	Id          string            `json:"id"`
-	UserId      string            `json:"user_id"`
-	Status      string            `json:"status"`
-	Amount      int64             `json:"amount"`
-	Items       []OrderItemDetail `json:"items"`
-	StatusLogs  []StatusLogItem   `json:"status_logs"`
-	CreatedAt   string            `json:"created_at"`
-	PaidAt      string            `json:"paid_at,optional"`
-	ExpireAt    string            `json:"expire_at,optional"`
-	CompletedAt string            `json:"completed_at,optional"`
-	CancelledAt string            `json:"cancelled_at,optional"`
-}
-
-type OrderDetailReq struct {
-	OrderId string `path:"order_id"`
+	Id          string              `json:"id"`
+	UserId      string              `json:"user_id"`
+	Status      string              `json:"status"`
+	TotalAmount int64               `json:"total_amount"`
+	Items       []OrderItemDetail   `json:"items"`
+	Delivery    []DeliveryEventItem `json:"delivery_events"`
+	CreatedAt   string              `json:"created_at"`
+	PaidAt      string              `json:"paid_at,optional"`
+	ExpireAt    string              `json:"expire_at,optional"`
+	CancelledAt string              `json:"cancelled_at,optional"`
+	DeliveredAt string              `json:"delivered_at,optional"`
 }
 
 type OrderDetailResp struct {
 	Order OrderDetail `json:"order"`
 }
 
+type OrderIdReq struct {
+	OrderId string `path:"order_id"`
+}
+
 type OrderItem struct {
 	Id          string `json:"id"`
-	Status      string `json:"status"` // pending_payment | cancelled | pending_completion | completed
-	Amount      int64  `json:"amount"`
+	Status      string `json:"status"` // pending_payment | paid | delivering | delivered | cancelled
+	TotalAmount int64  `json:"total_amount"`
 	CreatedAt   string `json:"created_at"`
 	PaidAt      string `json:"paid_at,optional"`
-	CompletedAt string `json:"completed_at,optional"`
 }
 
 type OrderItemDetail struct {
-	Id       string `json:"id"`
-	SkuId    string `json:"sku_id"`
-	SkuName  string `json:"sku_name"`
-	Price    int64  `json:"price"`
-	Quantity int64  `json:"quantity"`
-	Amount   int64  `json:"amount"`
+	Id          string `json:"id"`
+	ProductId   string `json:"product_id"`
+	ProductName string `json:"product_name"`
+	Unit        string `json:"unit"`
+	UnitPrice   int64  `json:"unit_price"` // 下单价快照，整数分
+	Quantity    int64  `json:"quantity"`
+	Amount      int64  `json:"amount"`
+}
+
+type OrderItemInput struct {
+	ProductId string `json:"product_id"`
+	Quantity  int64  `json:"quantity"` // 1-99
 }
 
 type OrderListReq struct {
@@ -345,58 +208,29 @@ type PageReq struct {
 	PageSize int `form:"page_size,default=20"`
 }
 
-type PageResp struct {
-	Total int64 `json:"total"`
-}
-
-type PaymentResp struct {
-	PaymentNo string `json:"payment_no"`
-	OrderId   string `json:"order_id"`
-	Amount    int64  `json:"amount"`
-	Status    string `json:"status"` // pending | success | closed
-	PaidAt    string `json:"paid_at,optional"`
-	CreatedAt string `json:"created_at"`
-}
-
-type ProductDetail struct {
-	Id            string    `json:"id"`
-	IpId          string    `json:"ip_id"`
-	SeriesId      string    `json:"series_id"`
-	Title         string    `json:"title"`
-	Description   string    `json:"description"`
-	Status        string    `json:"status"`
-	SaleStartTime string    `json:"sale_start_time,optional"`
-	Skus          []SkuItem `json:"skus"`
-	CreatedAt     string    `json:"created_at"`
-}
-
 type ProductDetailReq struct {
 	ProductId string `path:"product_id"`
 }
 
 type ProductDetailResp struct {
-	Product ProductDetail `json:"product"`
+	Product ProductItem `json:"product"`
 }
 
 type ProductItem struct {
-	Id            string `json:"id"`
-	IpId          string `json:"ip_id"`
-	SeriesId      string `json:"series_id"`
-	Title         string `json:"title"`
-	CoverImage    string `json:"cover_image"`
-	PriceMin      int64  `json:"price_min"` // 整数分
-	PriceMax      int64  `json:"price_max"`
-	Status        string `json:"status"` // on_sale | off_sale
-	SaleStartTime string `json:"sale_start_time,optional"`
-	CreatedAt     string `json:"created_at"`
+	Id          string `json:"id"`
+	CategoryId  string `json:"category_id"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	Unit        string `json:"unit"`  // 如 500g/份、盒
+	Price       int64  `json:"price"` // 整数分
+	Stock       int64  `json:"stock"` // 可售库存
+	Status      string `json:"status"`
+	CreatedAt   string `json:"created_at"`
 }
 
 type ProductListReq struct {
-	IpId     string `form:"ip_id,optional"`
-	SeriesId string `form:"series_id,optional"`
-	Keyword  string `form:"keyword,optional"`
-	MinPrice int64  `form:"min_price,optional"`
-	MaxPrice int64  `form:"max_price,optional"`
+	CategoryId string `form:"category_id,optional"`
+	Keyword    string `form:"keyword,optional"`
 	PageReq
 }
 
@@ -405,109 +239,44 @@ type ProductListResp struct {
 	Total int64         `json:"total"`
 }
 
-type RefundResp struct {
-	RefundNo    string `json:"refund_no"`
-	AfterSaleId string `json:"after_sale_id"`
-	OrderId     string `json:"order_id"`
+type RecipeDish struct {
+	RecipeId string   `json:"recipe_id"`
+	Title    string   `json:"title"`
+	Cuisine  string   `json:"cuisine,optional"`
+	Steps    []string `json:"steps"`
+}
+
+type RecipeWithSkus struct {
+	Recipe       RecipeDish     `json:"recipe"`
+	Items        []SkuMatchItem `json:"items"`
+	TotalAmount  int64          `json:"total_amount"`
+	WithinBudget bool           `json:"within_budget"`
+}
+
+type RegisterReq struct {
+	Username string `json:"username"` // 4-32 字符
+	Password string `json:"password"` // 8-64 字符
+	Nickname string `json:"nickname,optional"`
+}
+
+type SkuMatchItem struct {
+	SkuId       string `json:"sku_id"` // 匹配到的在售商品，无匹配为 ""
+	ProductName string `json:"product_name"`
+	Ingredient  string `json:"ingredient"`
+	Quantity    int64  `json:"quantity"`
+	UnitPrice   int64  `json:"unit_price"` // 整数分
 	Amount      int64  `json:"amount"`
-	Status      string `json:"status"` // pending | processing | success | failed
-	RefundedAt  string `json:"refunded_at,optional"`
-	CreatedAt   string `json:"created_at"`
+	Available   bool   `json:"available"` // 在售且有库存
 }
 
-type SeriesItem struct {
-	Id          string `json:"id"`
-	IpId        string `json:"ip_id"`
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	CreatedAt   string `json:"created_at"`
-}
-
-type SeriesListReq struct {
-	IpId string `form:"ip_id,optional"`
-	PageReq
-}
-
-type SeriesListResp struct {
-	List  []SeriesItem `json:"list"`
-	Total int64        `json:"total"`
-}
-
-type SkuItem struct {
-	Id    string `json:"id"`
-	Name  string `json:"name"`
-	Price int64  `json:"price"`
-	Stock int64  `json:"stock"`
-}
-
-type StatusLogItem struct {
-	Id         string `json:"id"`
-	FromStatus string `json:"from_status"`
-	ToStatus   string `json:"to_status"`
-	OperatorId string `json:"operator_id,optional"`
-	Note       string `json:"note,optional"`
-	CreatedAt  string `json:"created_at"`
-}
-
-type StockLogItem struct {
-	Id         string `json:"id"`
-	SkuId      string `json:"sku_id"`
-	Type       string `json:"type"` // adjust | reserve | release | confirm
-	Delta      int64  `json:"delta"`
-	Reason     string `json:"reason,optional"`
-	RefNo      string `json:"ref_no,optional"`
-	OperatorId string `json:"operator_id,optional"`
-	CreatedAt  string `json:"created_at"`
-}
-
-type StockLogListReq struct {
-	SkuId string `form:"sku_id,optional"`
-	PageReq
-}
-
-type StockLogListResp struct {
-	List  []StockLogItem `json:"list"`
-	Total int64          `json:"total"`
-}
-
-type StockResp struct {
-	SkuId     string `json:"sku_id"`
-	Total     int64  `json:"total"`
-	Available int64  `json:"available"`
-	Reserved  int64  `json:"reserved"`
-	Sold      int64  `json:"sold"`
-}
-
-type UpdateProductReq struct {
-	ProductId     string  `path:"product_id"`
-	SeriesId      *string `json:"series_id,optional"`
-	Title         *string `json:"title,optional"`
-	Description   *string `json:"description,optional"`
-	CoverImage    *string `json:"cover_image,optional"`
-	SaleStartTime *string `json:"sale_start_time,optional"`
-}
-
-type UpdateProductStatusReq struct {
-	ProductId string `path:"product_id"`
-	Status    string `json:"status"` // on_sale | off_sale
-}
-
-type UpdateSkuReq struct {
-	SkuId string  `path:"sku_id"`
-	Name  *string `json:"name,optional"`
-	Price *int64  `json:"price,optional"`
-}
-
-type UpdateUserMeReq struct {
-	Nickname *string `json:"nickname,optional"`
-	Avatar   *string `json:"avatar,optional"`
-	Bio      *string `json:"bio,optional"`
+type UpdateCartItemReq struct {
+	CartItemId string `path:"cart_item_id"`
+	Quantity   int64  `json:"quantity"` // 1-99；0 视为删除
 }
 
 type UserInfo struct {
 	Id        string `json:"id"`
 	Username  string `json:"username"`
 	Nickname  string `json:"nickname"`
-	Role      string `json:"role"` // user | operator
 	CreatedAt string `json:"created_at"`
 }

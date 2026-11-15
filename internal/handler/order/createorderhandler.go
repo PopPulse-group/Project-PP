@@ -12,7 +12,7 @@ import (
 	"poppulse/internal/types"
 )
 
-// M22 立即购买创建订单
+// 创建订单（服务端计价，Idempotency-Key 必填）
 func CreateOrderHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req types.CreateOrderReq

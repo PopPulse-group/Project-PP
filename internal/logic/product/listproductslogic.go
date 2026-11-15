@@ -19,7 +19,7 @@ type ListProductsLogic struct {
 	svcCtx *svc.ServiceContext
 }
 
-// M08 商品列表
+// 商品列表（分类/关键词/分页）
 func NewListProductsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ListProductsLogic {
 	return &ListProductsLogic{
 		Logger: logx.WithContext(ctx),

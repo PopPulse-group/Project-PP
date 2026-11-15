@@ -12,7 +12,7 @@ import (
 	"poppulse/internal/types"
 )
 
-// M03 账号密码登录
+// 登录
 func LoginHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req types.LoginReq
