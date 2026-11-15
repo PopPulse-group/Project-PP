@@ -7,8 +7,8 @@ import (
 	"net/http"
 
 	"github.com/zeromicro/go-zero/rest/httpx"
-	"poppulse/internal/logic/user"
-	"poppulse/internal/svc"
+	"vagetable-gozero/internal/logic/user"
+	"vagetable-gozero/internal/svc"
 )
 
 // 本人地址列表

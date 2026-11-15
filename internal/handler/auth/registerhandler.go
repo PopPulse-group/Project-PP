@@ -7,9 +7,9 @@ import (
 	"net/http"
 
 	"github.com/zeromicro/go-zero/rest/httpx"
-	"poppulse/internal/logic/auth"
-	"poppulse/internal/svc"
-	"poppulse/internal/types"
+	"vagetable-gozero/internal/logic/auth"
+	"vagetable-gozero/internal/svc"
+	"vagetable-gozero/internal/types"
 )
 
 // 注册（成功即登录，返回 token）

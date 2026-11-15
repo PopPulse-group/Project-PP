@@ -7,11 +7,11 @@ import (
 	"context"
 	"strconv"
 
-	"poppulse/internal/ctxdata"
-	"poppulse/internal/model"
-	"poppulse/internal/svc"
-	"poppulse/internal/types"
-	"poppulse/internal/xerr"
+	"vagetable-gozero/internal/ctxdata"
+	"vagetable-gozero/internal/model"
+	"vagetable-gozero/internal/svc"
+	"vagetable-gozero/internal/types"
+	"vagetable-gozero/internal/xerr"
 
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"

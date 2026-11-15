@@ -7,9 +7,9 @@ import (
 	"net/http"
 
 	"github.com/zeromicro/go-zero/rest/httpx"
-	"poppulse/internal/logic/ai"
-	"poppulse/internal/svc"
-	"poppulse/internal/types"
+	"vagetable-gozero/internal/logic/ai"
+	"vagetable-gozero/internal/svc"
+	"vagetable-gozero/internal/types"
 )
 
 // 生成菜谱推荐（人数/预算/口味/忌口 → 结构化菜谱 + 在售 SKU 匹配）

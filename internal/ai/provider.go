@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"strings"
 
-	"poppulse/internal/types"
+	"vagetable-gozero/internal/types"
 )
 
 // SkuInfo AI 匹配用的在售商品只读视图（由商品模块提供）

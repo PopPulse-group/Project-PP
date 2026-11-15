@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"poppulse/internal/ctxdata"
-	"poppulse/internal/xerr"
+	"vagetable-gozero/internal/ctxdata"
+	"vagetable-gozero/internal/xerr"
 )
 
 // OperatorMiddleware 校验当前登录用户是否具备运营（operator）角色。

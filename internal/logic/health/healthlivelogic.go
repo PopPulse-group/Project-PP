@@ -7,8 +7,8 @@ import (
 	"context"
 	"time"
 
-	"poppulse/internal/svc"
-	"poppulse/internal/types"
+	"vagetable-gozero/internal/svc"
+	"vagetable-gozero/internal/types"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )

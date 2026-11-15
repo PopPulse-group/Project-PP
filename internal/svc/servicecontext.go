@@ -1,9 +1,9 @@
 package svc
 
 import (
-	"poppulse/internal/config"
-	"poppulse/internal/middleware"
-	"poppulse/internal/model"
+	"vagetable-gozero/internal/config"
+	"vagetable-gozero/internal/middleware"
+	"vagetable-gozero/internal/model"
 
 	"github.com/zeromicro/go-zero/core/stores/redis"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"

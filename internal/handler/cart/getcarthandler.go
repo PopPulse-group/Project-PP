@@ -7,8 +7,8 @@ import (
 	"net/http"
 
 	"github.com/zeromicro/go-zero/rest/httpx"
-	"poppulse/internal/logic/cart"
-	"poppulse/internal/svc"
+	"vagetable-gozero/internal/logic/cart"
+	"vagetable-gozero/internal/svc"
 )
 
 // 查看购物车（实时价格与库存）

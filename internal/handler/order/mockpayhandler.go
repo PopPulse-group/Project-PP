@@ -7,9 +7,9 @@ import (
 	"net/http"
 
 	"github.com/zeromicro/go-zero/rest/httpx"
-	"poppulse/internal/logic/order"
-	"poppulse/internal/svc"
-	"poppulse/internal/types"
+	"vagetable-gozero/internal/logic/order"
+	"vagetable-gozero/internal/svc"
+	"vagetable-gozero/internal/types"
 )
 
 // 模拟支付（仅 Mock.Enabled 时可用）

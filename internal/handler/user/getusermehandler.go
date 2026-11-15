@@ -7,8 +7,8 @@ import (
 	"net/http"
 
 	"github.com/zeromicro/go-zero/rest/httpx"
-	"poppulse/internal/logic/user"
-	"poppulse/internal/svc"
+	"vagetable-gozero/internal/logic/user"
+	"vagetable-gozero/internal/svc"
 )
 
 // 当前用户

@@ -4,9 +4,9 @@
 
 ## 0. 前置条件（组长操作）
 
-1. `github.com/PopPulse-group` → **People → Invite member** 邀请组员
+1. `github.com/Vagetable` → **People → Invite member** 邀请组员
 2. 仓库 **Settings → Collaborators** 给每人 **Write** 权限
-3. 组员确认能打开 `https://github.com/PopPulse-group/Project-PP`
+3. 组员确认能打开 `https://github.com/Vagetable/Project-Vagetable`
 
 注意：本仓库此前误建过 PopPulse 潮玩电商，旧代码已归档到 tag `v0.1-poppulse-archived`，main 上现在是生鲜零售平台 MVP，请以 README 和本文档为准。
 
@@ -25,7 +25,7 @@
 
 ```bash
 cd ~/Desktop   # 或你的工作目录（不要在外层再 git init！）
-git clone https://github.com/PopPulse-group/Project-PP.git
+git clone https://github.com/Vagetable/Project-Vagetable.git
 cd Project-PP  # 必须进入克隆出来的目录再操作
 git remote -v  # 应显示 origin → Project-PP.git
 ```
@@ -34,8 +34,8 @@ git remote -v  # 应显示 origin → Project-PP.git
 
 ```powershell
 docker compose -f deployments/docker-compose.yml up -d
-docker exec -i fresh-mysql mysql -uroot -ppoppulse123 --default-character-set=utf8mb4 < deployments/migrations/001_init.sql
-docker exec -i fresh-mysql mysql -uroot -ppoppulse123 --default-character-set=utf8mb4 < scripts/seed.sql
+docker exec -i fresh-mysql mysql -uroot -pvagetable123 --default-character-set=utf8mb4 < deployments/migrations/001_init.sql
+docker exec -i fresh-mysql mysql -uroot -pvagetable123 --default-character-set=utf8mb4 < scripts/seed.sql
 Copy-Item etc/fresh.example.yaml etc/fresh.yaml   # 仅第一次
 go run fresh.go
 ```

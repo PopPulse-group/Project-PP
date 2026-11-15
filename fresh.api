@@ -3,7 +3,7 @@ syntax = "v1"
 info (
 	title:   "生鲜零售平台 MVP API"
 	desc:    "生鲜即时零售平台后端 MVP 接口契约 v1（两周计划书口径）"
-	author:  "PopPulse-group"
+	author:  "Vagetable"
 	version: "v1.0"
 )
 

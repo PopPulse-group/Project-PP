@@ -6,7 +6,7 @@ Mode: dev
 Timeout: 5000
 
 Mysql:
-  DataSource: "root:poppulse123@tcp(127.0.0.1:3306)/fresh?charset=utf8mb4&parseTime=true&loc=Local"
+  DataSource: "root:vagetable123@tcp(127.0.0.1:3306)/fresh?charset=utf8mb4&parseTime=true&loc=Local"
 
 Redis:
   Host: 127.0.0.1:6379

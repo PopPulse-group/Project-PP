@@ -7,9 +7,9 @@ import (
 	"net/http"
 
 	"github.com/zeromicro/go-zero/rest/httpx"
-	"poppulse/internal/logic/product"
-	"poppulse/internal/svc"
-	"poppulse/internal/types"
+	"vagetable-gozero/internal/logic/product"
+	"vagetable-gozero/internal/svc"
+	"vagetable-gozero/internal/types"
 )
 
 // 商品列表（分类/关键词/分页）

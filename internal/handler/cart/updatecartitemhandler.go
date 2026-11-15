@@ -7,9 +7,9 @@ import (
 	"net/http"
 
 	"github.com/zeromicro/go-zero/rest/httpx"
-	"poppulse/internal/logic/cart"
-	"poppulse/internal/svc"
-	"poppulse/internal/types"
+	"vagetable-gozero/internal/logic/cart"
+	"vagetable-gozero/internal/svc"
+	"vagetable-gozero/internal/types"
 )
 
 // 改数量（0 视为删除）

@@ -6,7 +6,7 @@ import (
 	"errors"
 	"net/http"
 
-	"poppulse/internal/xerr"
+	"vagetable-gozero/internal/xerr"
 )
 
 type Body struct {

@@ -9,14 +9,14 @@
 | 架构形态 | 单体 go-zero API 应用 + 单 MySQL（计划书第三节建议） |
 | DB 访问方式 | goctl model + go-zero sqlx，本周不改 |
 | 旧 demo（product/、product-api/） | 删除，Git 历史可找回 |
-| 仓库 | github.com/PopPulse-group/Project-PP（私有） |
+| 仓库 | github.com/Vagetable/Project-Vagetable（私有） |
 | 版本 | Go 1.25+（工具链 1.27）、go-zero latest（go mod tidy 锁定）、goctl 1.10.2、MySQL 8 |
 
 ## 目录结构
 
 ```
-poppulse-gozero/
-├── go.mod                    # module poppulse
+vagetable-gozero/
+├── go.mod                    # module vagetable-gozero
 ├── poppulse.go               # API 入口（goctl 生成 + 统一响应注册）
 ├── poppulse.api              # 接口契约 v1：39 个 MVP 接口
 ├── etc/poppulse.example.yaml # 模板配置（提交）；poppulse.yaml 本地（gitignore）

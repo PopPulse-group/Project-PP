@@ -21,8 +21,8 @@
 docker compose -f deployments/docker-compose.yml up -d
 
 # 2. 初始化表结构 + 种子数据（务必带 --default-character-set=utf8mb4，否则中文乱码）
-docker exec -i fresh-mysql mysql -uroot -ppoppulse123 --default-character-set=utf8mb4 < deployments/migrations/001_init.sql
-docker exec -i fresh-mysql mysql -uroot -ppoppulse123 --default-character-set=utf8mb4 < scripts/seed.sql
+docker exec -i fresh-mysql mysql -uroot -pvagetable123 --default-character-set=utf8mb4 < deployments/migrations/001_init.sql
+docker exec -i fresh-mysql mysql -uroot -pvagetable123 --default-character-set=utf8mb4 < scripts/seed.sql
 
 # 3. 准备本地配置（仅第一次）
 Copy-Item etc/fresh.example.yaml etc/fresh.yaml

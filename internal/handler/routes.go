@@ -6,14 +6,14 @@ package handler
 import (
 	"net/http"
 
-	ai "poppulse/internal/handler/ai"
-	auth "poppulse/internal/handler/auth"
-	cart "poppulse/internal/handler/cart"
-	health "poppulse/internal/handler/health"
-	order "poppulse/internal/handler/order"
-	product "poppulse/internal/handler/product"
-	user "poppulse/internal/handler/user"
-	"poppulse/internal/svc"
+	ai "vagetable-gozero/internal/handler/ai"
+	auth "vagetable-gozero/internal/handler/auth"
+	cart "vagetable-gozero/internal/handler/cart"
+	health "vagetable-gozero/internal/handler/health"
+	order "vagetable-gozero/internal/handler/order"
+	product "vagetable-gozero/internal/handler/product"
+	user "vagetable-gozero/internal/handler/user"
+	"vagetable-gozero/internal/svc"
 
 	"github.com/zeromicro/go-zero/rest"
 )

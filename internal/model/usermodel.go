@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"time"
 
-	"poppulse/internal/types"
+	"vagetable-gozero/internal/types"
 
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )

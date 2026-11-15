@@ -1,4 +1,4 @@
-module poppulse
+module vagetable-gozero
 
 go 1.27.0
 

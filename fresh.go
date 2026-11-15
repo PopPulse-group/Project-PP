@@ -7,10 +7,10 @@ import (
 	"flag"
 	"fmt"
 
-	"poppulse/internal/config"
-	"poppulse/internal/handler"
-	"poppulse/internal/response"
-	"poppulse/internal/svc"
+	"vagetable-gozero/internal/config"
+	"vagetable-gozero/internal/handler"
+	"vagetable-gozero/internal/response"
+	"vagetable-gozero/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/rest"

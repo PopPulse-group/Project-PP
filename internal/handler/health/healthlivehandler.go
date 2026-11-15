@@ -7,8 +7,8 @@ import (
 	"net/http"
 
 	"github.com/zeromicro/go-zero/rest/httpx"
-	"poppulse/internal/logic/health"
-	"poppulse/internal/svc"
+	"vagetable-gozero/internal/logic/health"
+	"vagetable-gozero/internal/svc"
 )
 
 // 进程存活
